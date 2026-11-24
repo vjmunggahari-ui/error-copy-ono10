@@ -1,35 +1,44 @@
-import { join, dirname } from "node:path";
+// Say What Actually Broke — make.fun entry (v2)
+// Writes one line of software error copy, at most 200 characters, to
+// $MAKEFUN_OUTPUT_DIR/entry.txt. The line names the real failure in plain
+// words (autosave overwrote the good version with an empty one) and the
+// exact next step (check version history), with a twist a reader repeats
+// out loud to a colleague.
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { mkdirSync, writeFileSync, readFileSync } from "node:fs";
 
-// One line of software error copy: the brutal truth about a full disk,
-// funny on a single read, shippable in a real error dialog.
-const ENTRY =
-  "Save failed: your disk is full. Free up some space first, or keep typing and watch this document exist only in your memory.";
+const LINE =
+  "Autosave just overwrote your good version with an empty one. Check version history to get it back \u2014 autosave giveth, and autosave taketh away.";
 
 const root = dirname(fileURLToPath(import.meta.url));
 const outDir = process.env.MAKEFUN_OUTPUT_DIR || join(root, "output");
 mkdirSync(outDir, { recursive: true });
 const outPath = join(outDir, "entry.txt");
-writeFileSync(outPath, ENTRY, "utf8");
+writeFileSync(outPath, LINE, "utf8");
 
-// Read-back self-check: the file must hold exactly the entry, 1-200 chars.
-const written = readFileSync(outPath, "utf8");
-if (written !== ENTRY) {
-  throw new Error("entry.txt does not match the chosen line");
+// Read-back self-check: the file on disk must be exactly the line, no
+// trailing newline, no extra bytes, and inside the 1..200 character gate.
+const back = readFileSync(outPath, "utf8");
+if (back !== LINE) {
+  throw new Error("entry.txt does not match the chosen line byte-for-byte");
 }
-if (written.length < 1 || written.length > 200) {
-  throw new Error(`entry length ${written.length} outside 1-200`);
+if (back.length < 1 || back.length > 200) {
+  throw new Error(`entry length ${back.length} outside the 1..200 gate`);
 }
-if (written.trim().length === 0) {
+if (back.trim().length === 0) {
   throw new Error("entry is only whitespace");
 }
-// Single-line enforcement: the gate wants one line, so no line breaks.
-if (written.includes("\n") || written.includes("\r")) {
-  throw new Error("entry must be a single line");
+if (back.includes("\n") || back.includes("\r")) {
+  throw new Error("entry must be a single line with no newline characters");
 }
-// The line must name the real failure in plain words.
-if (!written.toLowerCase().includes("disk is full")) {
-  throw new Error("entry does not name the failure");
+if (!back.endsWith(".")) {
+  throw new Error("entry must end with its punch on a full stop");
 }
-console.log(`wrote ${outPath} (${written.length} chars)`);
+if (!back.includes("version history")) {
+  throw new Error("entry lost its next step (check version history)");
+}
+if (!/Autosave just overwrote/.test(back)) {
+  throw new Error("entry lost the named failure (autosave overwrote)");
+}
+console.log(`wrote ${outPath} (${back.length} chars)`);

@@ -1,12 +1,9 @@
-# Say What Actually Broke — make.fun entry
+# Say What Actually Broke
 
-One line of software error copy that tells the user the brutal truth about a
-full disk and makes them laugh: the save failed, the disk is full, and if
-they keep typing, the document will exist only in their memory.
+One line of software error copy, at most 200 characters, that tells the user the brutal truth about what went wrong and makes them laugh: autosave overwrote the good version with an empty one, and version history is the way back.
 
-The program writes the line to `/output/entry.txt` (or to
-`$MAKEFUN_OUTPUT_DIR` when set) — deterministic, no network, no randomness.
+[![bounty](https://make.fun/badge/u-po-pu-say-what-actually-broke-a2c153b5.svg)](https://make.fun/bounty/u-po-pu-say-what-actually-broke-a2c153b5)
+[![rank](https://make.fun/badge/u-po-pu-say-what-actually-broke-a2c153b5/vjmunggahari-ui/error-copy-ono10/rank.svg)](https://make.fun/bounty/u-po-pu-say-what-actually-broke-a2c153b5)
+[![reward](https://make.fun/badge/u-po-pu-say-what-actually-broke-a2c153b5/vjmunggahari-ui/error-copy-ono10/reward.svg)](https://make.fun/bounty/u-po-pu-say-what-actually-broke-a2c153b5)
 
-[![bounty](https://make.fun/badge/u-po-pu-say-what-actually-broke-a2c153b5.svg)](https://make.fun/competitions/u-po-pu-say-what-actually-broke-a2c153b5)
-[![rank](https://make.fun/badge/u-po-pu-say-what-actually-broke-a2c153b5/vjmunggahari-ui/error-copy-ono10/rank.svg)](https://make.fun/competitions/u-po-pu-say-what-actually-broke-a2c153b5)
-[![reward](https://make.fun/badge/u-po-pu-say-what-actually-broke-a2c153b5/vjmunggahari-ui/error-copy-ono10/reward.svg)](https://make.fun/competitions/u-po-pu-say-what-actually-broke-a2c153b5)
+`main.ts` writes the line to `$MAKEFUN_OUTPUT_DIR/entry.txt` with no trailing newline, then reads it back and checks it byte-for-byte.
